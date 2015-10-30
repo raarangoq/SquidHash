@@ -3,6 +3,12 @@
 
 var player;
 var squid;
+var segment = null;
+
+
+var gui;
+
+
 var bullets;
 var keyboard;
 var explosions;
@@ -19,11 +25,6 @@ var bossBullets;
 var items;
 var item_munition;
 var torpedo;
-
-
-var tree;
-var gui;
-
 
 var pauseImage;
 var winImage;
@@ -44,6 +45,9 @@ var textb;
 var bmd, sprite;
 var graphics;
 
+
+var timeSpam;
+
 levels = {
     create: function() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -52,6 +56,10 @@ levels = {
     game.stage.backgroundColor = '#aaaaaa';
 
     addPlayer();
+
+text = game.add.text(20, 540, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
+texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
+textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
 
 
 //game.global.level = 7;
@@ -68,7 +76,7 @@ levels = {
     spiderExplodes.forEach(this.setupExplosion, this);
 
 
-    items = addItem(400, 000, "torpedo");
+    //items = addItem(400, 000, "torpedo");
 
 
     winImage = game.add.sprite(0, 0, 'win');
@@ -78,17 +86,15 @@ levels = {
     endImage = game.add.sprite(0, 0, 'end');
     endImage.visible = false;
 
-    if(game.global.level < 5)
-        sound_backgroud = game.add.audio('levelA', 0.5, true);
-    else
-        sound_backgroud = game.add.audio('levelB', 0.5, true);
-    sound_backgroud.play();
+    //if(game.global.level < 5)
+      //  sound_backgroud = game.add.audio('levelA', 0.5, true);
+    //else
+      //  sound_backgroud = game.add.audio('levelB', 0.5, true);
+    //sound_backgroud.play();
 
 
 
-text = game.add.text(20, 540, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
-texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
-textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
+
 
   
 
@@ -96,18 +102,28 @@ gui = new GUI();
 
 game.time.advancedTiming = true;
 
+timeSpam = game.time.now;
+
     },
 
 
 
     update: function() {
 
+        squid.update();
+
+        if(squid.keys.length >0 && game.time.now - timeSpam > 2000){
+            if (segment == null)
+                segment = addSegment();
+        }
+
         if (player.alive)
         {
-            player.updatePlayer();
+            player.update();
             if ( !winState ){
                 //game.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
-               
+                if (segment != null)
+                    segment.update();
             }
 
             //game.physics.arcade.overlap(items, player, this.setAbility);
@@ -129,13 +145,17 @@ game.time.advancedTiming = true;
         }
 
 
-        gui.updateGui();
+//        gui.updateGui();
 
 
     },
 
     addAliens: function(){
         squid = addSquid(200, 30);
+        for (var i=0; i<30; i++)
+            squid.extendTentacle();
+
+
     },
 
     // Establecer la explosión
@@ -166,13 +186,6 @@ game.time.advancedTiming = true;
         this.playerDies();
     },
 
-    bossHitsPlayer: function(player, bullet){
-        bullet.kill();
-        player.playerTakeDamageBoss();
-
-        this.playerDies();
-    },
-
     playerDies: function(){
         // When the player dies
         if (lives < 1)
@@ -185,10 +198,9 @@ game.time.advancedTiming = true;
     },
 
     render: function() {
-if (game.global.level == 7)       
-    text.text = leftWeapon.destroyed + "/" + rightWeapon.destroyed;
-textb.text = game.time.fps;
 
+textb.text = game.time.fps;
+//texta.text = squid.health + '\n is_attacking ' + player.is_attacking + '\n hitEnemy ' + player.attack.hitEnemy ;
     },
 
     resetBullet: function(bullet) {

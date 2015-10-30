@@ -34,13 +34,16 @@ text.fixedToCamera = true;
     game.load.spritesheet('worm', 'assets/pics/enemys/worm.png', 32, 32);
     game.load.spritesheet('spiderDie', 'assets/pics/enemys/spiderDie.png', 128, 128);
 
+    game.load.image('enemyBar', 'assets/pics/enemys/enemyBar.png');
+
     game.load.spritesheet('leftWeapon', 'assets/pics/enemys/leftWeapon.png', 98, 111);
     game.load.spritesheet('rightWeapon', 'assets/pics/enemys/rightWeapon.png', 98, 111);
     game.load.spritesheet('boss', 'assets/pics/enemys/boss.png', 332, 191);
 
     game.load.spritesheet('kaboom', 'assets/pics/explode.png', 128, 128);
 
-    game.load.spritesheet('player', 'assets/pics/player.png', 53, 50);
+    game.load.spritesheet('player', 'assets/pics/player.png', 70, 70);
+    game.load.spritesheet('attack','assets/pics/attackzone.png', 30, 30);
     
     game.load.image('starfield', 'assets/pics/starfield.png');
 
@@ -66,6 +69,7 @@ text.fixedToCamera = true;
     game.load.audio('torpedo', 'assets/sounds/torpedo.mp3');
     game.load.audio('creature', 'assets/sounds/creature.mp3');
     game.load.audio('hit', 'assets/sounds/golpes.mp3');
+    game.load.audio('swordair', 'assets/sounds/espada-aire.mp3');
 
 	},
 
