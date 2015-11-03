@@ -112,7 +112,7 @@ timeSpam = game.time.now;
 
         squid.update();
 
-        if(squid.keys.length >0 && game.time.now - timeSpam > 2000){
+        if(squid.keys.length > 0 && game.time.now - timeSpam > 2000){
             if (segment == null)
                 segment = addSegment();
         }
@@ -153,7 +153,7 @@ timeSpam = game.time.now;
     addAliens: function(){
         squid = addSquid(200, 30);
         for (var i=0; i<30; i++)
-            squid.extendTentacle();
+            squid.extendTentacle(null);
 
 
     },
@@ -200,7 +200,8 @@ timeSpam = game.time.now;
     render: function() {
 
 textb.text = game.time.fps;
-//texta.text = squid.health + '\n is_attacking ' + player.is_attacking + '\n hitEnemy ' + player.attack.hitEnemy ;
+//if (squid.retractingTentacle[0] != null)
+texta.text = squid.retractingTentacle[0];
     },
 
     resetBullet: function(bullet) {

@@ -24,6 +24,7 @@ function addTentacle(x, y, id){
     tentacle.setTarget = setTentacleTarget;
     tentacle.setInitTarget = setInitTarget;
     tentacle.takeDamage = tentacleTakeDamage;
+    tentacle.setDrawOrder = setTentacleDrawOrder;
 
     return tentacle;
 }
@@ -87,6 +88,13 @@ function addTentacleSegment(id){
 		
 		}
 	}
+}
+
+function setTentacleDrawOrder(){
+	this.bringToTop();
+	if(this.nextSegment != null)
+		this.nextSegment.setDrawOrder();
+
 }
 
 function setTentacleTarget(x, y, time){

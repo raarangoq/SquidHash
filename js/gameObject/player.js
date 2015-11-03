@@ -173,7 +173,6 @@ function updatePlayer(){
 
 	// Cuando se presiona la tecla SPACE se produce un ataque por parte del jugador
 	if(keyboard.spaceKey() && !this.is_attacking){
-		squid.attack();
 		this.toAttack();
 	}
 }

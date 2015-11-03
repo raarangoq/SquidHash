@@ -7,10 +7,18 @@ function addSquid(x, y){
 
     squid.tentacles = [];
     squid.tentaclesIsAttacking = [];
+    squid.retractingTentacle = [];
+    squid.xTentaclesPosition;
     squid.keys = [];
+    squid.timeOfInitAttack = [];
 
-    for(i=0; i<10 * game.global.level * 2; i++){
+    for(var i=0; i < 10 * game.global.level * 2; i++){
         squid.keys[i] = i;
+    }
+    for(var i=0; i < game.global.level * 2; i++){
+        squid.timeOfInitAttack[i] = game.time.now;
+        squid.tentaclesIsAttacking[i] = false;
+        squid.retractingTentacle[i] = false;
     }
 
     squid.health = 300;
@@ -23,16 +31,33 @@ function addSquid(x, y){
     squid.update = updateSquid;
     squid.extendTentacle = extendTentacle;
     squid.attack = squidAttacks;
+    squid.isAttacking = squidIsAttacking;
     squid.retractTentacle = retractTentacle;
     squid.takeDamage = squidTakeDagame;
+    squid.setDrawOrder = setSquidDrawOrder;
 
     addTentacles(squid);
     return squid;
 }
 
 function addTentacles(squid){
-    for (var i= game.global.level * 2 - 1; i>=0; i--){
-        squid.tentacles[i] = addTentacle( squid.body.x - 40 + (i*40), squid.body.y + 200, i * 10 );
+    if (game.global.level == 5){
+        squid.xTentaclesPosition = squid.body.x - 40;
+    }
+    else if(game.global.level == 4){
+        squid.xTentaclesPosition = squid.body.x;
+    }
+    else if(game.global.level == 3){
+        squid.xTentaclesPosition = squid.body.x + 40;
+    }
+    else if(game.global.level == 2){
+        squid.xTentaclesPosition = squid.body.x + 80;
+    }
+    else
+        squid.xTentaclesPosition = squid.body.x + 120;
+
+    for (var i = game.global.level * 2 - 1; i>=0; i--){
+        squid.tentacles[i] = addTentacle( squid.xTentaclesPosition + (i*40), squid.body.y + 200, i * 10 );
         squid.tentaclesIsAttacking[i] = false;
         squid.keys.splice(i*10, 1);
     }
@@ -46,10 +71,26 @@ function updateSquid(){
             this.tentacles[i].update();
     }
 
-    if (this.tentaclesIsAttacking[2] && this.tentacles[2] != null){
-        if (game.time.now - time > 1900){
-            this.tentaclesIsAttacking[2] = false;
-            var segment = this.tentacles[2];
+    for (var i = 0; i < game.global.level * 2; i++){
+        if ( !this.isAttacking[i] && 
+            game.time.now - this.timeOfInitAttack[i] > 3000 && 
+            !this.retractingTentacle[i] &&
+            Math.random() < 0.001 )
+            this.attack(i);
+
+        this.isAttacking(i);
+    }
+
+    
+    
+}
+
+function squidIsAttacking(i){
+    if (this.tentaclesIsAttacking[i] && this.tentacles[i] != null){
+        if (game.time.now - this.timeOfInitAttack[i] > 1000){
+          this.tentaclesIsAttacking[i] = false;
+            
+            var segment = this.tentacles[i];
 
             var xDirection = player.body.x - segment.body.x;
             var yDirection = player.body.y - segment.body.y;
@@ -66,46 +107,89 @@ function updateSquid(){
             }
         }
     }
+    else if(!this.tentaclesIsAttacking[i] && 
+            !this.retractingTentacle[i] &&
+            game.time.now - this.timeOfInitAttack[i] > 1500){
+        this.retractTentacle(this.tentacles[i], i);
+        this.retractingTentacle[i] = true;
+    }
+
+    if (this.retractingTentacle[i] && game.time.now - this.timeOfInitAttack[i] > 2500)
+        this.retractingTentacle[i] = false;
 }
 
-var time = 0;
-
-function extendTentacle(){
-    if(squid.keys.length <= 0)
+function squidAttacks(i){
+    if (this.tentacles[i] == null)
         return;
-    
 
-    var id = Math.random() * squid.keys.length;
-    var key = squid.keys[Math.floor(id)];
+    this.tentaclesIsAttacking[i] = true;
+    this.timeOfInitAttack[i] = game.time.now;
+    this.retractTentacle(this.tentacles[i], i);
+}
+
+function retractTentacle(tentacle, position){
+    var i=0;
+    var segment = tentacle;
+
+    var orientation;
+    if (position < game.global.level)
+        orientation = -1;
+    else
+        orientation = 1;
+
+    while (segment.nextSegment != null){
+        if (i < 4)
+            segment.nextSegment.setTarget(segment.xTarget + (orientation * 5), segment.yTarget - 30, 750);
+        else
+            segment.nextSegment.setTarget(segment.xTarget + (orientation * 5), segment.yTarget + 30, 750);
+
+        segment = segment.nextSegment;
+        i++;
+    }
+}
+
+
+function extendTentacle(id){
+    if(this.keys.length <= 0)
+        return;
+
+    if (id == null){
+        id = Math.floor( Math.random() * this.keys.length ); 
+    }
+
+    var key = this.keys[id];
+    this.keys.splice(id, 1);
 
     var tentacle = this.tentacles[ Math.floor(key/10) ];
     if (tentacle != null){
-        this.tentacles[ Math.floor(key/10) ].addSegment(key);
+        tentacle.addSegment(key);
     }
     else
         this.tentacles[ Math.floor(key/10) ] = addTentacle( 
-            squid.body.x - 40 + (Math.floor(key/10)*40), 
-            squid.body.y + 200, 
+            this.xTentaclesPosition + (Math.floor(key/10)*40), 
+            this.body.y + 200, 
             key);
 
+
+
     tentacle = this.tentacles[ Math.floor(key/10) ]
+    tentacle.setInitTarget(this.xTentaclesPosition + (Math.floor(key/10)*40), this.body.y + 200);
 
-if (tentacle.nextSegment != null)
-        texta.text = tentacle.id + '\n' + tentacle.nextSegment.id;  
-
-    tentacle.setInitTarget(squid.body.x - 40 + (Math.floor(key/10)*40), squid.body.y + 200);
-
-    squid.keys.splice(Math.floor(id), 1);
+    this.setDrawOrder();
+   
 
 }
 
-function squidAttacks(){
-    this.tentaclesIsAttacking[2] = true;
-    time = game.time.now;
-
-    if (this.tentacles[2] != null)
-        this.retractTentacle(this.tentacles[2]);
+function setSquidDrawOrder(){
+    for(var i=0; i < game.global.level; i++){
+        if (this.tentacles[i] != null)
+            this.tentacles[i].setDrawOrder();
+        if (this.tentacles[game.global.level * 2 - i - 1])
+            this.tentacles[game.global.level * 2 - i - 1].setDrawOrder();
+    }
 }
+
+
 
 function squidTakeDagame(damage){
     this.health -= damage;
@@ -113,21 +197,7 @@ function squidTakeDagame(damage){
     this.healthBar.width = 120 * ( this.health / this.maxHealth);
 }
 
-function retractTentacle(tentacle){
-    var i=0;
-    var segment = tentacle;
-    while (segment.nextSegment != null){
-        if (i<4){
-            segment.nextSegment.setTarget(segment.xTarget - 5, segment.yTarget - 30, 750);
-        }
-        else{
-            segment.nextSegment.setTarget(segment.xTarget - 5, segment.yTarget + 30, 750);
-        }
-        segment = segment.nextSegment;
 
-        i++;
-    }
-}
 
 
 
