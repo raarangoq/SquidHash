@@ -39,9 +39,9 @@ function updateGui(){
 
 
 // true for take a new item, false when de player uses a item or lose the item
-function changeAbility(take){
+function changeAbility(take, type){
 	if (take)
-		this.items_bar.setItemsBarAbility();
+		this.items_bar.setItemsBarAbility(type);
 	else
-		this.items_bar.useItemsBarAbility();
+		this.items_bar.useItemsBarAbility(type);
 }

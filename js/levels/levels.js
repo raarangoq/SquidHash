@@ -12,24 +12,22 @@ var gui;
 var bullets;
 var keyboard;
 var explosions;
-var spiderExplodes;
-var starfield;
 var score = 0;
 var scoreString = '';
 var scoreText;
 var lives;
 var enemyBullets;
-var weaponBullets;
-var bossBullets;
 
-var items;
-var item_munition;
-var torpedo;
+var items = null;
+var torpedo = null;
 
 var pauseImage;
 var winImage;
 var loseImage;
 var endImage;
+
+var inkImage;
+var timeOfInkColide;
 
 var winState = false;
 var boss;
@@ -76,8 +74,13 @@ textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff
     spiderExplodes.forEach(this.setupExplosion, this);
 
 
-    //items = addItem(400, 000, "torpedo");
+    items = addItem(400, 200, "torpedo");
 
+
+    inkImage = game.add.sprite(0, 0, 'ink');
+    inkImage.visible = false;
+    inkImage.alpha = 1;
+    timeOfInkColide = game.time.now - 5000;
 
     winImage = game.add.sprite(0, 0, 'win');
     winImage.visible = false;
@@ -86,12 +89,8 @@ textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff
     endImage = game.add.sprite(0, 0, 'end');
     endImage.visible = false;
 
-    //if(game.global.level < 5)
-      //  sound_backgroud = game.add.audio('levelA', 0.5, true);
-    //else
-      //  sound_backgroud = game.add.audio('levelB', 0.5, true);
-    //sound_backgroud.play();
-
+    sound_backgroud = game.add.audio('levelB', 0.5, true);
+//    sound_backgroud.play();
 
 
 
@@ -103,6 +102,7 @@ gui = new GUI();
 game.time.advancedTiming = true;
 
 timeSpam = game.time.now;
+segment = null;
 
     },
 
@@ -112,22 +112,44 @@ timeSpam = game.time.now;
 
         squid.update();
 
-        if(squid.keys.length > 0 && game.time.now - timeSpam > 2000){
-            if (segment == null)
-                segment = addSegment();
+        if(!winState && 
+            squid.keys.length > 0 && 
+            game.time.now - timeSpam > (10000 / game.global.level) ){
+                if (segment == null){
+                    segment = addSegment();
+                    timeSpam = game.time.now;
+                }
         }
 
         if (player.alive)
         {
             player.update();
             if ( !winState ){
-                //game.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
+                game.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
                 if (segment != null)
                     segment.update();
             }
 
-            //game.physics.arcade.overlap(items, player, this.setAbility);
-            //game.physics.arcade.overlap(item_munition, player, this.setAbility);
+            if(torpedo && torpedo.body){
+                if(torpedo.body.y < -30){
+                    torpedo.destroy();
+                }
+                if (game.physics.arcade.overlap(torpedo, squid) ){
+                    squid.takeDamage(torpedo.damage);
+                    this.addExplosion(torpedo.body.x, torpedo.body.y);
+                    torpedo.destroy();
+                    
+                }
+            }
+
+            if (items){
+                if (items.body.y > 600){
+                    items.destroy();
+                    items = null;
+                }
+                game.physics.arcade.overlap(items, player, this.setAbility);
+
+            }
 
         }
         else{
@@ -136,7 +158,7 @@ timeSpam = game.time.now;
         }
 
         if( winState ){
-            if (game.global.level != 7)
+            if (game.global.level != 5)
                 winImage.visible = true;
             else
                 endImage.visible = true;
@@ -145,17 +167,30 @@ timeSpam = game.time.now;
         }
 
 
-//        gui.updateGui();
+        gui.updateGui();
 
+        if (game.time.now - timeOfInkColide < 3000){
+            inkImage.alpha = 1;
+        }
+        else if(game.time.now - timeOfInkColide < 6000 )
+            game.add.tween(inkImage).to({ alpha:0 }, 3000, Phaser.Easing.Linear.None, true);
+        else 
+            inkImage.visible = false;
 
     },
 
     addAliens: function(){
         squid = addSquid(200, 30);
-        for (var i=0; i<30; i++)
+        for (var i=0; i < game.global.level * 10; i++)
             squid.extendTentacle(null);
 
 
+    },
+
+    addExplosion: function(x, y){
+        var explosion = explosions.getFirstExists(false);
+        explosion.reset(x, y);
+        explosion.play('kaboom', 30, false, true);
     },
 
     // Establecer la explosión
@@ -166,29 +201,27 @@ timeSpam = game.time.now;
     },
 
     setAbility: function(item, player){
-        gui.upScore(3000);
+        gui.upScore(100);
         item.takeItem();
     },
 
     enemyHitsPlayer: function(player, bullet) {
         
         bullet.kill();
-        player.playerTakeDamage();
+        player.takeDamage(enemyBullets.damage);
+
+        timeOfInkColide = game.time.now;
+        inkImage.alpha = 1;
+        inkImage.visible = true;
+        
 
         this.playerDies();
 
-    },
-
-    weaponHitsPlayer: function(player, bullet){
-        bullet.kill();
-        player.playerTakeDamageWeapon();
-
-        this.playerDies();
     },
 
     playerDies: function(){
         // When the player dies
-        if (lives < 1)
+        if (game.global.lives < 1)
         {
             player.kill();
             enemyBullets.callAll('kill');
@@ -201,7 +234,7 @@ timeSpam = game.time.now;
 
 textb.text = game.time.fps;
 //if (squid.retractingTentacle[0] != null)
-texta.text = squid.retractingTentacle[0];
+texta.text = player.speed;
     },
 
     resetBullet: function(bullet) {
@@ -214,15 +247,20 @@ texta.text = squid.retractingTentacle[0];
     restart: function() {
         sound_backgroud.stop();
 
-        if (player.alive)
+        if (player.alive){
             game.global.level++;
-        else
-            game.global.level = 1;
+            if (game.global.level == 6){
+                game.global.level = 1;
+                game.global.lives = 3;
+            }
+        }
+        else{
+            game.global.lives = 3;
+            score = 0;
+            game.global.health = 100;
+        }
 
         winState = false;
-
-        if (game.global.level == 8)
-            game.global.level = 1;
 
         game.state.start('levels');
 

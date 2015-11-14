@@ -3,7 +3,7 @@ function addSegment(){
 	var segment;
     segment = game.add.sprite(800, 200, "drone");
     game.physics.enable(segment, Phaser.Physics.ARCADE);
-    segment.body.velocity.x = -50;
+    segment.body.velocity.x = -100;
 
 
     segment.id = Math.floor(Math.random() * squid.keys.length);
@@ -22,6 +22,7 @@ function addSegment(){
 function updateSegment(){
     if (game.physics.arcade.overlap(this, squid)){
         squid.extendTentacle(this.id);
+        timeSpam = game.time.now;
         this.destroy();
         segment = null;
     }

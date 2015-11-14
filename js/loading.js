@@ -16,8 +16,6 @@ text.fixedToCamera = true;
     game.load.image('fastArrow', 'assets/pics/bullets/fastArrow.png');
 
     game.load.image('torpedo', 'assets/pics/items/bombArrowItem.png');
-    game.load.image('machineGun', 'assets/pics/items/fastArrowItem.png');
-    game.load.image('munition', 'assets/pics/items/munitionItem.png');
     game.load.image('velocity', 'assets/pics/items/speedItem.png');
 
     game.load.image('enemyBullet', 'assets/pics/bullets/spiderBullet.png');
@@ -35,6 +33,8 @@ text.fixedToCamera = true;
     game.load.spritesheet('spiderDie', 'assets/pics/enemys/spiderDie.png', 128, 128);
 
     game.load.image('enemyBar', 'assets/pics/enemys/enemyBar.png');
+
+    game.load.image('ink', 'assets/pics/ink.png');
 
     game.load.spritesheet('leftWeapon', 'assets/pics/enemys/leftWeapon.png', 98, 111);
     game.load.spritesheet('rightWeapon', 'assets/pics/enemys/rightWeapon.png', 98, 111);

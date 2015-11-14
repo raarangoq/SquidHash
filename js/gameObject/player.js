@@ -4,7 +4,7 @@ function addPlayer(){
 	// El objeto player en si mismo es un objeto sprite
 	player = game.add.sprite(400, 400, 'player');
 	game.physics.enable(player, Phaser.Physics.ARCADE);
-	player.body.colliderWorldBounds = true;
+	player.body.collideWorldBounds = true;
 	player.scale.setTo(1.3, 1.3);
 	player.body.setSize(30, 34, 19 + 9, 17 + 15);   // Reajustar el collider del jugador, para que solo cubra el cuerpo
 
@@ -16,11 +16,16 @@ function addPlayer(){
 	// Atributos variables
 	player.attack = player.addChild(addAttack());
 	
+	player.haveTorpedo = false;
+	player.timeWithVelocity = 5000;
+    player.timeVelocityActivated = game.time.time - 5000;
+
 	player.canMove = true;
 	player.direction = "";
 	player.is_attacking = false;
-	player.speed = 150;
-	player.health = 50;
+	player.speed = 200;
+	player.highSpeed = 400;
+	player.health = game.global.health;
 	player.hitDamage = 10;
 	player.timeBetweenAttacks = 500;
 
@@ -38,6 +43,11 @@ function addPlayer(){
 	player.toAttack = toAttack;
 	player.update = updatePlayer;
 
+	player.activateAbility = activateAbility;
+	player.activateVelocity = activateVelocity;
+
+	player.takeDamage = playerTakeDamage;
+	player.checkHealth = checkHealth;
 
 	// Se agregan las animaciones del jugador al instanciar uno
 	addPlayerAnimations();
@@ -92,6 +102,27 @@ function hitPlayer(segment){
 	this.sound_hit.play();
 }
 
+function playerTakeDamage(damage){
+	game.global.health -= damage;
+	this.checkHealth();
+}
+
+function checkHealth(){
+    if (game.global.health <= 0){
+        this.sound_hit.play();
+        game.global.lives--;
+        if (game.global.lives > 0)
+            game.global.health = 100;
+        else
+            game.global.health = 0;
+
+        //  And create an explosion :)
+        var explosion = explosions.getFirstExists(false);
+        explosion.reset(player.body.x, player.body.y);
+        explosion.play('kaboom', 30, false, true);
+    }
+}
+
 
 
 // El movimiento del jugador mediante teclado
@@ -110,27 +141,27 @@ function movePlayer(){
 	}
 */	
 	// Al presionar una tecla, el jugador se mueve y se activa una animacion
-	if(keyboard.leftKey() &&  this.body.x>50){
+	if(keyboard.leftKey()){
 		// Mover a la izquierda
 		this.body.velocity.x = -this.speed;
 		this.playAnimations('left');
 		if(!this.is_attacking) 
 			this.attack.changeAttackOrientation('left', this);
 	}
-	else if(keyboard.rightKey() && this.body.x<730){
+	else if(keyboard.rightKey()){
 		// Mover a la derecha
 		this.body.velocity.x = this.speed;
 		this.playAnimations('right');
 		if(!this.is_attacking) 
 			this.attack.changeAttackOrientation('right', this)
 	} // arriba
-	else if(keyboard.upKey() && this.body.y>100){
+	else if(keyboard.upKey() && this.body.y>200){
 		this.body.velocity.y = -this.speed;
 		this.playAnimations('back');
 		if(!this.is_attacking) 
 			this.attack.changeAttackOrientation('back', this)
 	} // abajo
-	else if(keyboard.downKey() && this.body.y<550){
+	else if(keyboard.downKey() /*&& this.body.y<550*/){
 		this.body.velocity.y = this.speed;
 		this.playAnimations('front');
 		if(!this.is_attacking) 
@@ -171,8 +202,35 @@ function updatePlayer(){
 	this.movePlayer();
 	this.attacking();
 
+	if (game.time.time - this.timeVelocityActivated < this.timeWithVelocity){
+        this.speed = this.highSpeed;
+    }
+    else{
+        this.speed = 200;
+        gui.changeAbility(false, "velocity");
+    }  
+
 	// Cuando se presiona la tecla SPACE se produce un ataque por parte del jugador
 	if(keyboard.spaceKey() && !this.is_attacking){
-		this.toAttack();
+		if ( this.haveTorpedo ){
+            torpedo = addTorpedo();
+            this.haveTorpedo = false;
+        }
+        else
+			this.toAttack();
 	}
+}
+
+function activateAbility(type){
+	gui.upScore(50);
+    if( type == "torpedo" ){
+        this.haveTorpedo = true;
+    }  
+    else if ( type == "velocity"){
+        this.activateVelocity();
+    } 
+}
+
+function activateVelocity(){
+    this.timeVelocityActivated = game.time.time;
 }

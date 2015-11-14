@@ -25,6 +25,7 @@ function addTentacle(x, y, id){
     tentacle.setInitTarget = setInitTarget;
     tentacle.takeDamage = tentacleTakeDamage;
     tentacle.setDrawOrder = setTentacleDrawOrder;
+    tentacle.checkSegmentPosition = checkSegmentPosition;
 
     return tentacle;
 }
@@ -38,6 +39,11 @@ function updateTentacle(){
     else{
     	player.attack.attackHitEnemy(this);
     }
+
+    if(winState){
+    	this.takeDamage(this.health + 20);
+    	this.destroy();
+    }
 }
 
 function tentacleTakeDamage(damage){
@@ -50,6 +56,14 @@ function tentacleTakeDamage(damage){
 			squid.tentacles[Math.floor(this.id/10)] = null;
 		}
 		squid.keys.push(this.id);
+
+		if (!winState && !items){
+			if (Math.random() < 0.1)
+				items = addItem(squid.body.x + 200, squid.body.x - 100, "torpedo");
+			else if(Math.random() < 0.1)
+				items = addItem(squid.body.x + 200, squid.body.x - 100, "velocity");
+		}
+		
 		//this.destroy();
 	}
 }
@@ -103,12 +117,24 @@ function setTentacleTarget(x, y, time){
 	game.physics.arcade.moveToXY(this, x, y, null,  time);
 }
 
+function checkSegmentPosition(position){
+	if (position == 2 || position == 3 || position == 6 || position == 7 || position == 10)
+		return false;
+	return true;
+}
 
-function setInitTarget(x, y){
+function setInitTarget(x, y, orientation, position){
+	position || (position = 0);
+
+
 	this.xTarget = x;
 	this.yTarget = y;
 	game.physics.arcade.moveToXY(this, x, y, 200);
 
-	if (this.nextSegment != null)
-		this.nextSegment.setInitTarget(x, y + 25);
+	if (this.nextSegment != null){
+		if( this.checkSegmentPosition(position) )
+			this.nextSegment.setInitTarget(x + (orientation * 2), y + 15, orientation, position + 1);
+		else
+			this.nextSegment.setInitTarget(x - (orientation), y + 25, orientation, position + 1);
+	}
 }

@@ -25,14 +25,14 @@ function addLivesBar(){
 }
 
 function updateLivesBar(){
-    this.health.text = 'Salud: ' + player.health;
+    this.health.text = 'Salud: ' + game.global.health;
 
-    if (lives <= 2)
+    if (game.global.lives <= 2)
         this.heart[0].visible = false;
 
-    if (lives <= 1)
+    if (game.global.lives <= 1)
         this.heart[1].visible = false;
 
-    if (lives == 0)
+    if (game.global.lives == 0)
         this.heart[2].visible = false;
 }
