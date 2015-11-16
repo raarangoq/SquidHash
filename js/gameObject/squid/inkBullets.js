@@ -30,6 +30,6 @@ function fireInkBullet(){
         // And fire the bullet from this enemy
         enemyBullet.reset(squid.body.x + 100, squid.body.y + 100);
         //game.physics.arcade.moveToObject(enemyBullet, player, 120);
-        game.physics.arcade.moveToXY(enemyBullet, player.body.x, player.body.y, 120);
+        game.physics.arcade.moveToXY(enemyBullet, player.body.x, player.body.y, 300);
     }
 }

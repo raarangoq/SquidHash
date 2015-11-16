@@ -1,7 +1,7 @@
 
 function addSegment(){
 	var segment;
-    segment = game.add.sprite(800, 200, "drone");
+    segment = game.add.sprite(squid.body.x + 600, squid.body.y + 50, "drone");
     game.physics.enable(segment, Phaser.Physics.ARCADE);
     segment.body.velocity.x = -100;
 

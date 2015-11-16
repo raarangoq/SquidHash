@@ -4,6 +4,7 @@ function addSquid(x, y){
     var squid;
     squid = game.add.sprite(x, y, "boss");
     game.physics.enable(squid, Phaser.Physics.ARCADE);
+    squid.body.setSize(100, 140, 114, 26);
 
     squid.tentacles = [];
     squid.tentaclesIsAttacking = [];
@@ -15,8 +16,10 @@ function addSquid(x, y){
     squid.lowerTimeBetweenAttacks = 5000 - (game.global.level * 500);
     squid.highTimeBetweenAttacks = 8000 - (game.global.level * 500);
     squid.timeForNextAttack = game.time.now + squid.highTimeBetweenAttacks;
+    squid.xDirectionForAttack = 0;
+    squid.yDirectionForAttack = 0;
 
-    squid.timeBetweenInks = 1500;
+    squid.timeBetweenInks = 5000 + (5000 / game.global.level);
     squid.timeOfLastInk = game.time.now;
     addInkBullets();
 
@@ -119,22 +122,27 @@ function setSquidTimeForNextAttack(i){
 
 function squidIsAttacking(i){
     if (this.tentaclesIsAttacking[i] && this.tentacles[i]){
-        if (game.time.now - this.timeOfInitAttack[i] > 1000){
+        if (game.time.now - this.timeOfInitAttack[i] < 500){
+            this.xDirectionForAttack = player.body.x - this.tentacles[i].body.x;
+            this.yDirectionForAttack = player.body.y - this.tentacles[i].body.y;
+
+        }
+        else if (game.time.now - this.timeOfInitAttack[i] > 1000){
             this.tentaclesIsAttacking[i] = false;
             this.retractingTentacle[i] = false;
 
             var segment = this.tentacles[i];
 
-            var xDirection = player.body.x - segment.body.x;
-            var yDirection = player.body.y - segment.body.y;
-            var magnitude = Math.sqrt( Math.pow(xDirection, 2) + Math.pow(yDirection, 2) );
-            xDirection /= magnitude;
-            yDirection /= magnitude;
+            var magnitude = Math.sqrt( 
+                Math.pow(this.xDirectionForAttack, 2) + Math.pow(this.yDirectionForAttack, 2) 
+                );
+            this.xDirectionForAttack /= magnitude;
+            this.yDirectionForAttack /= magnitude;
 
             while (segment.nextSegment != null){
                 segment.nextSegment.setTarget(
-                    segment.xTarget + (xDirection * 28), 
-                    segment.yTarget + (yDirection * 28), 
+                    segment.xTarget + (this.xDirectionForAttack * 28), 
+                    segment.yTarget + (this.yDirectionForAttack * 28), 
                     200);
                 segment = segment.nextSegment;
             }

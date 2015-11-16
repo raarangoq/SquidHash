@@ -48,6 +48,7 @@ function addPlayer(){
 
 	player.takeDamage = playerTakeDamage;
 	player.checkHealth = checkHealth;
+	player.playerDies = playerDies;
 
 	// Se agregan las animaciones del jugador al instanciar uno
 	addPlayerAnimations();
@@ -89,22 +90,35 @@ function attacking(){
 
 
 function hitPlayer(segment){
-	this.canMove = false;
+	
 	this.start_time_hit = game.time.time;
-	this.health -= this.hitDamage;
-	gui.updateHealthBar(this.health);
+	if(this.canMove)
+		this.takeDamage(segment.damage);
+	this.canMove = false;
 
-	if(this.body.velocity.x == 0 && this.body.velocity.y == 0){
+	if(segment.body.velocity.x == 0 && segment.body.velocity.y == 0){
+		var xDirection = player.body.x - segment.body.x;
+        var yDirection = player.body.y - segment.body.y;
+        var magnitude = Math.sqrt( Math.pow(xDirection, 2) + Math.pow(yDirection, 2) );
+        xDirection /= magnitude;
+        yDirection /= magnitude;
+
+        player.body.velocity.x = xDirection * 200;
+        player.body.velocity.y = yDirection * 200;
+	}
+
+/*	if(this.body.velocity.x == 0 && this.body.velocity.y == 0){
 		this.body.velocity.x = 150;
 		this.body.velocity.y = 150;
 	}
-
+*/
 	this.sound_hit.play();
 }
 
 function playerTakeDamage(damage){
 	game.global.health -= damage;
 	this.checkHealth();
+	this.playerDies();
 }
 
 function checkHealth(){
@@ -123,11 +137,22 @@ function checkHealth(){
     }
 }
 
+function playerDies(){
+        // When the player dies
+if (game.global.lives < 1){
+    player.kill();
+    enemyBullets.callAll('kill');
+
+    loseImage.visible = true;
+}
+    
+}
+
 
 
 // El movimiento del jugador mediante teclado
 function movePlayer(){
-	if(!this.canMove)
+	if(!this.canMove || game.physics.arcade.isPaused || winState)
 		return;
 
 
@@ -196,7 +221,7 @@ function toAttack(){
 
 // Se ejecutan las funciones del jugador, como moverse y atacar
 function updatePlayer(){
-	if(game.time.elapsedSince(this.start_time_hit) > 500 )
+	if(game.time.elapsedSince(this.start_time_hit) > 1000 )
 		this.canMove = true;
 
 	this.movePlayer();

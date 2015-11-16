@@ -169,12 +169,12 @@ segment = null;
 
         gui.updateGui();
 
-        if (game.time.now - timeOfInkColide < 3000){
-            inkImage.alpha = 1;
+        if (game.time.now - timeOfInkColide < 2000){
+
         }
-        else if(game.time.now - timeOfInkColide < 6000 )
-            game.add.tween(inkImage).to({ alpha:0 }, 3000, Phaser.Easing.Linear.None, true);
-        else 
+        else if(game.time.now - timeOfInkColide < 4000 )
+            game.add.tween(inkImage).to({ alpha:0 }, 2000, Phaser.Easing.Linear.None, true);
+        else
             inkImage.visible = false;
 
     },
@@ -214,21 +214,9 @@ segment = null;
         inkImage.alpha = 1;
         inkImage.visible = true;
         
-
-        this.playerDies();
-
     },
 
-    playerDies: function(){
-        // When the player dies
-        if (game.global.lives < 1)
-        {
-            player.kill();
-            enemyBullets.callAll('kill');
-
-            loseImage.visible = true;
-        }
-    },
+    
 
     render: function() {
 

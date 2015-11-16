@@ -3,12 +3,13 @@ function addTentacle(x, y, id){
 	var tentacle;
     tentacle = game.add.sprite(x, y, "drone");
     game.physics.enable(tentacle, Phaser.Physics.ARCADE);
-
+    tentacle.body.immovable = true;
 
     var textId = game.add.text(10, 0, id, { fontSize: '14px', fill: '#ffffff'});
     var child = tentacle.addChild(textId);
     game.physics.enable(child, Phaser.Physics.ARCADE);
 
+    tentacle.damage = 20;
     
     tentacle.id = id;
     tentacle.xTarget = x;
@@ -31,8 +32,14 @@ function addTentacle(x, y, id){
 }
 
 function updateTentacle(){
-	if( game.physics.arcade.distanceToXY(this, this.xTarget, this.yTarget) < 5 ) 
+	if( game.physics.arcade.distanceToXY(this, this.xTarget, this.yTarget) < 10 ) 
         this.body.velocity.setTo(0,0);
+
+    if (/*player.canMove &&*/ game.physics.arcade.collide(this, player)){
+    	if(player.canMove)
+    		player.hitPlayer(this);
+
+    }
 
     if (this.nextSegment != null)
     	this.nextSegment.update();
@@ -77,7 +84,7 @@ function addTentacleSegment(id){
 		// Se llegó al último elemento
 		else{
 			var tentacle = squid.tentacles[Math.floor(id/10)];
-			var segment = addTentacle(tentacle.body.x, tentacle.body.y + 20, id);
+			var segment = addTentacle(tentacle.body.x, tentacle.body.y, id);
 			this.nextSegment = segment;
 			segment.previousSegment = this;
 		}
@@ -86,7 +93,7 @@ function addTentacleSegment(id){
 		// Insertar en medio de dos segmentos
 		if (this.previousSegment != null){
 			var tentacle = squid.tentacles[Math.floor(id/10)];
-			var segment = addTentacle(tentacle.body.x, tentacle.body.y + 20, id);
+			var segment = addTentacle(tentacle.body.x, tentacle.body.y, id);
 			segment.previousSegment = this.previousSegment;
 			segment.nextSegment = this;
 			this.previousSegment.nextSegment = segment;

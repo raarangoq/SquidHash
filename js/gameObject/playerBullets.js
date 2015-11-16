@@ -11,7 +11,7 @@ function addTorpedo(){
     torpedo.play('fly');
     torpedo.body.acceleration.y = -300;
 
-    torpedo.damage = 150;
+    torpedo.damage = 50;
 
     torpedo.sound = game.add.audio("torpedo", 0.5);
     torpedo.sound.play();
