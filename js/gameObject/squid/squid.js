@@ -32,12 +32,14 @@ function addSquid(x, y){
         squid.retractingTentacle[i] = false;
     }
 
-    squid.health = 300;
-    squid.maxHealth = 300;
+    squid.health = 300 + (game.global.level * 50);
+    squid.maxHealth = 300 + (game.global.level * 50);
 
     squid.healthBar = game.add.sprite(100,  20, 'enemyBar');
     squid.healthBar.width = 120;
     squid.addChild(squid.healthBar);
+
+    squid.hit_sound = game.add.audio('creature');
 
     squid.update = updateSquid;
     squid.extendTentacle = extendTentacle;
@@ -87,7 +89,7 @@ function addTentacles(squid){
 }
 
 function updateSquid(){
-    player.attack.attackHitEnemy(this);
+    
 
     for(var i=0; i< game.global.level * 2; i++){
         if(this.tentacles[i] != null)
@@ -95,6 +97,8 @@ function updateSquid(){
     }
 
     if (!winState){
+        player.attack.attackHitEnemy(this);
+
         for (var i = 0; i < game.global.level * 2; i++){
             this.isAttacking(i);
         }
@@ -265,7 +269,17 @@ function squidTakeDagame(damage){
 
     if (this.health <= 0){
         this.healthBar.visible = false;
-        winState = true;
+
+        var explosion = explosions.getFirstExists(false);
+        explosion.reset(this.body.x, this.body.y);
+        explosion.play('kaboom', 30, false, true);
+
+        explosion = explosions.getFirstExists(false);
+        explosion.reset(this.body.x + 100, this.body.y + 40);
+        explosion.play('kaboom', 30, false, true);
+
+        this.hit_sound.play();
+        player.setWinState();
     }
 }
 

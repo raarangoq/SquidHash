@@ -9,13 +9,15 @@ function addTentacle(x, y, id){
     var child = tentacle.addChild(textId);
     game.physics.enable(child, Phaser.Physics.ARCADE);
 
-    tentacle.damage = 20;
+    tentacle.damage = 20 + (game.global.level * 5);
     
     tentacle.id = id;
     tentacle.xTarget = x;
     tentacle.yTarget = y;
 
     tentacle.health = 10;
+
+    tentacle.hit_sound = game.add.audio('rugido');
 
     tentacle.previousSegment = null;
     tentacle.nextSegment = null;
@@ -31,37 +33,57 @@ function addTentacle(x, y, id){
     return tentacle;
 }
 
-function updateTentacle(){
+function updateTentacle(hitTorpedo){
+	if(!hitTorpedo)
+		hitTorpedo = false;
+
 	if( game.physics.arcade.distanceToXY(this, this.xTarget, this.yTarget) < 10 ) 
         this.body.velocity.setTo(0,0);
 
-    if (/*player.canMove &&*/ game.physics.arcade.collide(this, player)){
+    if (game.physics.arcade.collide(this, player)){
     	if(player.canMove)
     		player.hitPlayer(this);
-
     }
 
-    if (this.nextSegment != null)
-    	this.nextSegment.update();
+    if (torpedo && game.physics.arcade.overlap(this, torpedo)){
+    	hitTorpedo = true;
+    	boom_sound.play();
+    	torpedo.destroy();
+    }
+
+    if (this.nextSegment != null){
+    	this.nextSegment.update(hitTorpedo);   	
+    }
     else{
     	player.attack.attackHitEnemy(this);
+    	if(this.health <= 0)
+    		return;
     }
 
-    if(winState){
+    if(winState || (hitTorpedo && this.previousSegment != null)){
+    	if(hitTorpedo){
+    		//  And create an explosion :)
+	        var explosion = explosions.getFirstExists(false);
+	        explosion.reset(this.body.x, this.body.y);
+	        explosion.play('kaboom', 30, false, true);
+    	}
     	this.takeDamage(this.health + 20);
-    	this.destroy();
     }
 }
 
 function tentacleTakeDamage(damage){
+	if(this.previousSegment == null && !winState)
+		return;
+
 	this.health -= damage;
+
 	if (this.health <=0 ){
 
 		if (this.previousSegment != null)
 			this.previousSegment.nextSegment = null;
-		else{
+		else
 			squid.tentacles[Math.floor(this.id/10)] = null;
-		}
+
 		squid.keys.push(this.id);
 
 		if (!winState && !items){
@@ -69,9 +91,12 @@ function tentacleTakeDamage(damage){
 				items = addItem(squid.body.x + 200, squid.body.x - 100, "torpedo");
 			else if(Math.random() < 0.1)
 				items = addItem(squid.body.x + 200, squid.body.x - 100, "velocity");
+
+
 		}
-		
-		//this.destroy();
+		if(!winState)
+			this.hit_sound.play();
+		this.destroy();
 	}
 }
 

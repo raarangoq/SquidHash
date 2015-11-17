@@ -54,11 +54,11 @@ text.fixedToCamera = true;
     game.load.image('lose', 'assets/pics/images/lose.png');
     game.load.image('pause', 'assets/pics/images/pause.png');
     game.load.image('win', 'assets/pics/images/win.png');
+    game.load.spritesheet('linkfail', 'assets/pics/videos/linkfail.png', 145, 175);
 
 
 
 	game.load.audio('inicio', 'assets/sounds/inicio.mp3');
-    game.load.audio('levelA', 'assets/sounds/levelA.mp3');
     game.load.audio('levelB', 'assets/sounds/levelB.mp3');
     game.load.audio('final', 'assets/sounds/final.mp3');
 
@@ -70,6 +70,8 @@ text.fixedToCamera = true;
     game.load.audio('creature', 'assets/sounds/creature.mp3');
     game.load.audio('hit', 'assets/sounds/golpes.mp3');
     game.load.audio('swordair', 'assets/sounds/espada-aire.mp3');
+    game.load.audio('scream', 'assets/sounds/grito.mp3');
+    game.load.audio('boom', 'assets/sounds/explosion.mp3');
 
 	},
 

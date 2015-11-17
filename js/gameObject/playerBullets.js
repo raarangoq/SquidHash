@@ -2,14 +2,37 @@
 
 function addTorpedo(){
 
+    if(player.direction == "front"){
+        torpedo = game.add.sprite( player.body.x + 15, player.body.y + 60, 'bombArrow');
+        game.physics.enable(torpedo, Phaser.Physics.ARCADE);
+        torpedo.body.acceleration.y = +300;
+        torpedo.angle = 180;
+    }
+    else if(player.direction == "back"){
+        torpedo = game.add.sprite( player.body.x + 15, player.body.y - 40 , 'bombArrow');
+        game.physics.enable(torpedo, Phaser.Physics.ARCADE);
+        torpedo.body.acceleration.y = -300;
+        //torpedo.angle = 180;
+    }
+    else if(player.direction == "right"){
+        torpedo = game.add.sprite( player.body.x + 50, player.body.y, 'bombArrow');
+        game.physics.enable(torpedo, Phaser.Physics.ARCADE);
+        torpedo.body.acceleration.x = +300;
+        torpedo.angle = 90;
+    }
+    else{
+        torpedo = game.add.sprite( player.body.x - 30, player.body.y, 'bombArrow');
+        game.physics.enable(torpedo, Phaser.Physics.ARCADE);
+        torpedo.body.acceleration.x = -300;
+        torpedo.angle = -90;
+    }
 
-    torpedo = game.add.sprite( player.body.x + 15, player.body.y - 20 , 'bombArrow');
+    
     torpedo.anchor.setTo(0.5, 0.5);
     torpedo.animations.add('fly', [0, 1], 6, true);
-    game.physics.enable(torpedo, Phaser.Physics.ARCADE);
-    torpedo.body.colliderWorldBounds = true;
     torpedo.play('fly');
-    torpedo.body.acceleration.y = -300;
+
+
 
     torpedo.damage = 50;
 

@@ -50,6 +50,8 @@ function addPlayer(){
 	player.checkHealth = checkHealth;
 	player.playerDies = playerDies;
 
+	player.setWinState = setWinState;
+
 	// Se agregan las animaciones del jugador al instanciar uno
 	addPlayerAnimations();
 }
@@ -139,12 +141,12 @@ function checkHealth(){
 
 function playerDies(){
         // When the player dies
-if (game.global.lives < 1){
-    player.kill();
-    enemyBullets.callAll('kill');
+	if (game.global.lives < 1){
+	    player.kill();
+	    enemyBullets.callAll('kill');
 
-    loseImage.visible = true;
-}
+	    loseImage.visible = true;
+	}
     
 }
 
@@ -214,7 +216,7 @@ function toAttack(){
 	this.is_attacking = true;
 	this.attack.hitEnemy = true;
 	this.start_time_attack = game.time.time;
-	this.speed = this.SPEED_ATTACKING;
+//	this.speed = this.SPEED_ATTACKING;
 	this.sound_sword_fail.play();
 }
 
@@ -231,7 +233,10 @@ function updatePlayer(){
         this.speed = this.highSpeed;
     }
     else{
-        this.speed = 200;
+    	if(!this.is_attacking)
+        	this.speed = this.SPEED_WALKING;
+        else
+        	this.speed = this.SPEED_ATTACKING;
         gui.changeAbility(false, "velocity");
     }  
 
@@ -243,6 +248,19 @@ function updatePlayer(){
         }
         else
 			this.toAttack();
+	}
+
+	// cuando el jugador cae al agua sufre daño y vuelve a una posición por defecto
+	if(!winState && this.body.y < 200){
+		this.takeDamage(20);
+			var explosion = explosions.getFirstExists(false);
+	        explosion.reset(this.body.x, this.body.y);
+	        explosion.play('kaboom', 30, false, true);
+
+		this.body.position.setTo(200, 500);
+
+		this.start_time_hit = game.time.time;
+		this.canMove = false;
 	}
 }
 
@@ -258,4 +276,10 @@ function activateAbility(type){
 
 function activateVelocity(){
     this.timeVelocityActivated = game.time.time;
+}
+
+
+function setWinState(){
+	winState = true;
+	timeOfWinState = game.time.now;
 }

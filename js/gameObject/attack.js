@@ -53,9 +53,9 @@ function attackHitEnemy(enemy){
         if (game.physics.arcade.overlap(this, enemy) ){
          	enemy.takeDamage(player.hitDamage);
          	this.hitEnemy = false;
-         	if (enemy.health <= 0){
-         		enemy.destroy();
-         	}
+//        	if (enemy.health <= 0){
+//         		enemy.destroy();
+//         	}
         }
     }
 }
