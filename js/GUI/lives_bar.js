@@ -20,6 +20,7 @@ function addLivesBar(){
 
 
     livesBar.updateLivesBar = updateLivesBar;
+    livesBar.setDrawOrder = livesBarSetDrawOrder;
 
     return livesBar;
 }
@@ -35,4 +36,11 @@ function updateLivesBar(){
 
     if (game.global.lives == 0)
         this.heart[2].visible = false;
+}
+
+function livesBarSetDrawOrder(){
+    this.bringToTop();
+    this.heart[0].bringToTop();
+    this.heart[1].bringToTop();
+    this.heart[2].bringToTop();
 }

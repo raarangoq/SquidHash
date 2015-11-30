@@ -25,6 +25,7 @@ var pauseImage;
 var winImage;
 var loseImage;
 var endImage;
+var background;
 
 var inkImage;
 var timeOfInkColide;
@@ -59,35 +60,12 @@ var playedE = false;
 levels = {
     create: function() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    //  The scrolling starfield background
-    //starfield = game.add.tileSprite(0, 0, 800, 600, 'starfield');
-    game.stage.backgroundColor = '#aaaaaa';
+
+
+    background = game.add.tileSprite(0, 0, 800, 600, 'background');
+    //game.stage.backgroundColor = '#aaaaaa';
 
     addPlayer();
-
-text = game.add.text(20, 540, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
-texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
-textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
-
-
-//game.global.level = 7;
-
-    this.addAliens();
-    
-    //  An explosion pool
-    explosions = game.add.group();
-    explosions.createMultiple(15, 'kaboom');
-    explosions.forEach(this.setupExplosion, this);
-/*
-    spiderExplodes = game.add.group();
-    spiderExplodes.createMultiple(30, 'spiderDie');
-    spiderExplodes.forEach(this.setupExplosion, this);
-*/
-
-    items = addItem(400, 200, "torpedo");
-    timeSpam = game.time.now;
-    segment = null;
-
 
     inkImage = game.add.sprite(0, 0, 'ink');
     inkImage.visible = false;
@@ -100,6 +78,27 @@ textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff
     loseImage.visible = false;
     endImage = game.add.sprite(0, 0, 'end');
     endImage.visible = false;
+
+    gui = new GUI();
+
+//text = game.add.text(20, 540, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
+//texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
+//textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
+
+
+//game.global.level = 7;
+
+    this.addAliens();
+    
+    //  An explosion pool
+    explosions = game.add.group();
+    explosions.createMultiple(15, 'kaboom');
+    explosions.forEach(this.setupExplosion, this);
+
+
+    items = addItem(400, 200, "torpedo");
+    timeSpam = game.time.now;
+    segment = null;
 
     sound_backgroud = game.add.audio('levelB', 0.5, true);
     sound_backgroud.play();
@@ -115,9 +114,9 @@ textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff
 
       
 
-    gui = new GUI();
+    
 
-game.time.advancedTiming = true;
+//game.time.advancedTiming = true;
 
 
         winState = false;
@@ -199,7 +198,7 @@ game.time.advancedTiming = true;
     },
 
     addAliens: function(){
-        squid = addSquid(200, 30);
+        squid = addSquid(320, 0);
         for (var i=0; i < game.global.level * 10; i++)
             squid.extendTentacle(null);
 
@@ -309,7 +308,6 @@ game.time.advancedTiming = true;
     },
 
     setAbility: function(item, player){
-        gui.upScore(100);
         item.takeItem();
     },
 
@@ -328,9 +326,22 @@ game.time.advancedTiming = true;
 
     render: function() {
 
-textb.text = game.time.fps;
+//textb.text = game.time.fps;
 //if (squid.retractingTentacle[0] != null)
-texta.text = player.speed;
+//texta.text = player.speed;
+/*var segment = squid.tentacles[0]
+    .nextSegment
+    .nextSegment
+    .nextSegment
+    .nextSegment;
+
+
+if (segment && segment.body){
+texta.text = segment.xTarget + '\n' +
+    segment.yTarget + '\n' +
+    game.physics.arcade.distanceToXY(segment, segment.xTarget, segment.yTarget) ;  
+}
+*/
     },
 
     resetBullet: function(bullet) {
@@ -355,7 +366,7 @@ texta.text = player.speed;
             score = 0;
             game.global.health = 100;
         }
-
+        winState = false;
         game.state.start('levels');
 
     },

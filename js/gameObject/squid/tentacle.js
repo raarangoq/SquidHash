@@ -1,7 +1,7 @@
 
 function addTentacle(x, y, id){
 	var tentacle;
-    tentacle = game.add.sprite(x, y, "drone");
+    tentacle = game.add.sprite(x, y, "segment");
     game.physics.enable(tentacle, Phaser.Physics.ARCADE);
     tentacle.body.immovable = true;
 
@@ -37,8 +37,15 @@ function updateTentacle(hitTorpedo){
 	if(!hitTorpedo)
 		hitTorpedo = false;
 
-	if( game.physics.arcade.distanceToXY(this, this.xTarget, this.yTarget) < 10 ) 
+	if( game.physics.arcade.distanceToXY(this, this.xTarget, this.yTarget) < 30 ){ 
         this.body.velocity.setTo(0,0);
+        this.setTarget(this.xTarget, this.yTarget, 200)
+
+        if(game.physics.arcade.distanceToXY(this, this.xTarget, this.yTarget) < 10){
+        	this.body.x = this.xTarget;
+        	this.body.y = this.yTarget;
+        }
+    }
 
     if (game.physics.arcade.collide(this, player)){
     	if(player.canMove)
@@ -77,7 +84,9 @@ function tentacleTakeDamage(damage){
 
 	this.health -= damage;
 
+
 	if (this.health <=0 ){
+		gui.upScore(20);
 
 		if (this.previousSegment != null)
 			this.previousSegment.nextSegment = null;
@@ -88,9 +97,9 @@ function tentacleTakeDamage(damage){
 
 		if (!winState && !items){
 			if (Math.random() < 0.1)
-				items = addItem(squid.body.x + 200, squid.body.x - 100, "torpedo");
+				items = addItem(squid.body.x + 100, squid.body.y + 100, "torpedo");
 			else if(Math.random() < 0.1)
-				items = addItem(squid.body.x + 200, squid.body.x - 100, "velocity");
+				items = addItem(squid.body.x + 100, squid.body.y + 100, "velocity");
 
 
 		}
@@ -158,11 +167,12 @@ function checkSegmentPosition(position){
 function setInitTarget(x, y, orientation, position){
 	position || (position = 0);
 
+	this.setTarget(x, y, 1000);
+//	this.xTarget = x;
+//	this.yTarget = y;
+//	game.physics.arcade.moveToXY(this, this.xTarget, this.yTarget, 200);
 
-	this.xTarget = x;
-	this.yTarget = y;
-	game.physics.arcade.moveToXY(this, x, y, 200);
-
+	
 	if (this.nextSegment != null){
 		if( this.checkSegmentPosition(position) )
 			this.nextSegment.setInitTarget(x + (orientation * 2), y + 15, orientation, position + 1);

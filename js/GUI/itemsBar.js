@@ -16,12 +16,20 @@ function itemsBar(){
 	this.updateItemsBar = updateItemsBar;
 	this.setItemsBarAbility = setItemsBarAbility;
 	this.useItemsBarAbility = useItemsBarAbility;
+	this.setDrawOrder = itemsBarSetDrawOrder;
 }
 
 
 function updateItemsBar(){
 	
 }
+
+function itemsBarSetDrawOrder(){
+	this.itemsBar.bringToTop();
+	this.itemImage['torpedo'].bringToTop();
+	this.itemImage['velocity'].bringToTop();
+}
+
 
 function useItemsBarAbility(type){
 	this.itemImage[type].visible = false;

@@ -14,16 +14,12 @@ function GUI(){
 	this.pause_menu = addPause();
 
 	// Metodos
-	
-	this.pauseGame = pauseGame;
-
-	this.upScore = upScore;
-
-	
-	this.changeAbility = changeAbility;
-
 	this.updateGui = updateGui;
+	this.setDrawOrder = guiSetDrawOrder;
 
+	this.pauseGame = pauseGame;
+	this.upScore = upScore;
+	this.changeAbility = changeAbility;
 
 	this.pauseGame();
 
@@ -44,4 +40,11 @@ function changeAbility(take, type){
 		this.items_bar.setItemsBarAbility(type);
 	else
 		this.items_bar.useItemsBarAbility(type);
+}
+
+function guiSetDrawOrder(){
+	this.pause_menu.setDrawOrder();
+	this.items_bar.setDrawOrder();
+	this.lives_bar.setDrawOrder();
+	scoreText.setDrawOrder();
 }

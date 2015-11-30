@@ -3,6 +3,7 @@ function addPause(){
 	var pause_menu = game.add.sprite(0, 0, 'pause');
 	pause_menu.fixedToCamera = true;
 
+	pause_menu.setDrawOrder = pauseMenuSetDrawOrder;
 
 	return pause_menu;
 }
@@ -17,5 +18,9 @@ function pauseGame(){
 		this.pause_menu.visible = true;
 		game.physics.arcade.isPaused = true;
 	}
+}
+
+function pauseMenuSetDrawOrder(){
+	this.bringToTop();
 }
 

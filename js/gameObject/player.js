@@ -49,6 +49,7 @@ function addPlayer(){
 	player.takeDamage = playerTakeDamage;
 	player.checkHealth = checkHealth;
 	player.playerDies = playerDies;
+	player.setDrawOrder = playerSetDrawOrder;
 
 	player.setWinState = setWinState;
 
@@ -109,11 +110,6 @@ function hitPlayer(segment){
         player.body.velocity.y = yDirection * 200;
 	}
 
-/*	if(this.body.velocity.x == 0 && this.body.velocity.y == 0){
-		this.body.velocity.x = 150;
-		this.body.velocity.y = 150;
-	}
-*/
 	this.sound_hit.play();
 }
 
@@ -148,6 +144,10 @@ function playerDies(){
 	    loseImage.visible = true;
 	}
     
+}
+
+function playerSetDrawOrder(){
+	inkImage.bringToTop();
 }
 
 
@@ -251,7 +251,7 @@ function updatePlayer(){
 	}
 
 	// cuando el jugador cae al agua sufre daño y vuelve a una posición por defecto
-	if(!winState && this.body.y < 200){
+	if(!winState && this.body.y < 150){
 		this.takeDamage(20);
 			var explosion = explosions.getFirstExists(false);
 	        explosion.reset(this.body.x, this.body.y);
