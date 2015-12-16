@@ -163,11 +163,18 @@ levels = {
                 if(torpedo.body.y < -30)
                     torpedo.destroy();
                 
-                if (game.physics.arcade.overlap(torpedo, squid) ){
+                if (game.physics.arcade.overlap(torpedo, squid.beak) ){
                     squid.takeDamage(torpedo.damage);
                     this.addExplosion(torpedo.body.x, torpedo.body.y);
                     torpedo.destroy();
                 }
+                
+                if (game.physics.arcade.overlap(torpedo, squid) ){
+                    this.addExplosion(torpedo.body.x, torpedo.body.y);
+                    torpedo.destroy();
+                }
+
+                
             }
 
             if (items){

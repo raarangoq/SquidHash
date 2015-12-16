@@ -14,7 +14,7 @@ game.state.add('loading', loading, true);
 //game.state.add('win', win);
 
 game.state.add('initMenu', initMenu);
-//game.state.add('introVideo', intro_video);
+game.state.add('introVideo', intro_video);
 
 game.state.add('levels', levels);
 

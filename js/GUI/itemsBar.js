@@ -10,7 +10,7 @@ function itemsBar(){
 	this.itemImage['velocity'] = game.add.sprite(80, 500, 'velocity');
 	this.itemImage['velocity'].visible = false;
 
-	this.timeItem = game.add.text(80, 515, "", { font: '16px Arial', fill: '#fff' })
+//	this.timeItem = game.add.text(80, 515, "", { font: '16px Arial', fill: '#fff' })
 
 
 	this.updateItemsBar = updateItemsBar;

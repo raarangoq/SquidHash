@@ -5,7 +5,10 @@ function addTentacle(x, y, id){
     game.physics.enable(tentacle, Phaser.Physics.ARCADE);
     tentacle.body.immovable = true;
 
-    var textId = game.add.text(10, 0, id, { fontSize: '14px', fill: '#ffffff'});
+//var mod = id % (game.global.level * 2);
+
+    var textId = game.add.text(10, 0, id, 
+    	{ font: '14px ferney', fill: '#fff', stroke: '#000000', strokeThickness: 3 });
     var child = tentacle.addChild(textId);
     game.physics.enable(child, Phaser.Physics.ARCADE);
 
@@ -30,10 +33,15 @@ function addTentacle(x, y, id){
     tentacle.setDrawOrder = setTentacleDrawOrder;
     tentacle.checkSegmentPosition = checkSegmentPosition;
 
+    tentacle.setFrameSegment = setFrameSegment;
+
     return tentacle;
 }
 
 function updateTentacle(hitTorpedo){
+	if (!this.body)
+		return;
+
 	if(!hitTorpedo)
 		hitTorpedo = false;
 
@@ -58,7 +66,7 @@ function updateTentacle(hitTorpedo){
     	torpedo.destroy();
     }
 
-    if (this.nextSegment != null){
+	if (this.nextSegment != null){
     	this.nextSegment.update(hitTorpedo);   	
     }
     else{
@@ -66,6 +74,7 @@ function updateTentacle(hitTorpedo){
     	if(this.health <= 0)
     		return;
     }
+    
 
     if(winState || (hitTorpedo && this.previousSegment != null)){
     	if(hitTorpedo){
@@ -88,10 +97,12 @@ function tentacleTakeDamage(damage){
 	if (this.health <=0 ){
 		gui.upScore(20);
 
-		if (this.previousSegment != null)
+		if (this.previousSegment != null){
 			this.previousSegment.nextSegment = null;
-		else
-			squid.tentacles[Math.floor(this.id/10)] = null;
+			this.previousSegment.setFrameSegment();
+		}
+//		else
+//			squid.tentacles[Math.floor(this.id/10)] = null;
 
 		squid.keys.push(this.id);
 
@@ -106,43 +117,35 @@ function tentacleTakeDamage(damage){
 		if(!winState)
 			this.hit_sound.play();
 		this.destroy();
+
+		
 	}
 }
 
+function setFrameSegment(){
+	if(this.previousSegment == null || this.nextSegment != null)
+		this.frame = 0;
+	else{
+		if(this.id % (game.global.level * 2) >= game.global.level)
+			this.frame = 1;
+		else
+			this.frame = 2;
+	}
+}
 
 function addTentacleSegment(id){
-	if (this.id < id){
-		// Avanzar en la lista
-		if (this.nextSegment != null)
-			this.nextSegment.addSegment(id);
-		// Se llegó al último elemento
-		else{
-			var tentacle = squid.tentacles[Math.floor(id/10)];
-			var segment = addTentacle(tentacle.body.x, tentacle.body.y, id);
-			this.nextSegment = segment;
-			segment.previousSegment = this;
-		}
-	}
-	else{
-		// Insertar en medio de dos segmentos
-		if (this.previousSegment != null){
-			var tentacle = squid.tentacles[Math.floor(id/10)];
-			var segment = addTentacle(tentacle.body.x, tentacle.body.y, id);
-			segment.previousSegment = this.previousSegment;
-			segment.nextSegment = this;
-			this.previousSegment.nextSegment = segment;
-			this.previousSegment = segment;
-		}
-		// Insertar al inicio de la lista
-		else{
-			var x = squid.body.x - 40 + (id/10 * 40);
-			var segment = addTentacle( x, squid.body.y + 200, id);
-			this.previousSegment = segment;
-			segment.nextSegment = this;
-			squid.tentacles[Math.floor(id/10)] = segment;
-		
-		}
-	}
+	var number = id % (game.global.level * 2);
+	var x = squid.xTentaclesPosition + (number * 40);
+	if(number >= game.global.level)
+		x += 60;
+	var segment = addTentacle( x, squid.body.y + 150, id);
+	this.previousSegment = segment;
+	segment.nextSegment = this;
+	squid.tentacles[number] = segment;
+
+	this.previousSegment.setFrameSegment();
+	this.setFrameSegment();
+
 }
 
 function setTentacleDrawOrder(){

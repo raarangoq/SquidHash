@@ -8,7 +8,8 @@ function addSegment(){
 
     segment.id = Math.floor(Math.random() * squid.keys.length);
 
-    var textId = game.add.text(10, 0, squid.keys[segment.id], { fontSize: '14px', fill: '#ffffff'});
+    var textId = game.add.text(10, 0, squid.keys[segment.id], 
+        { font: '14px ferney', fill: '#fff', stroke: '#000000', strokeThickness: 3 });
     var child = segment.addChild(textId);
     game.physics.enable(child, Phaser.Physics.ARCADE);
 

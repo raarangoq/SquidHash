@@ -3,7 +3,14 @@ function addSquid(x, y){
 
     var squid;
     squid = game.add.sprite(x, y, "boss");
+    addBossAnimations(squid);
     game.physics.enable(squid, Phaser.Physics.ARCADE);
+    squid.body.setSize(158, 126, 46, 40);
+
+    squid.beak = squid.addChild(game.add.sprite(105, 150, 'beak'));
+    game.physics.enable(squid.beak, Phaser.Physics.ARCADE);
+    addBeakAnimations(squid.beak);
+    squid.beak.takeDamage = beakTakeDamage;
 
     squid.tentacles = [];
     squid.tentaclesIsAttacking = [];
@@ -54,21 +61,37 @@ function addSquid(x, y){
     return squid;
 }
 
+function beakTakeDamage(damage){
+    this.parent.takeDamage(damage);
+}
+
+function addBossAnimations(squid){
+    squid.animations.add('move', [ 0 ], 20, true);
+    squid.animations.add('die', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 10);
+
+    squid.play('move');
+}
+
+function addBeakAnimations(beak){
+    beak.animations.add('move', [0, 1, 2, 3], 5, true);
+    beak.play('move');
+}
+
 function addTentacles(squid){
     if (game.global.level == 5){
-        squid.xTentaclesPosition = squid.body.x - 120;
+        squid.xTentaclesPosition = squid.body.x - 95;
     }
     else if(game.global.level == 4){
-        squid.xTentaclesPosition = squid.body.x - 90;
-    }
-    else if(game.global.level == 3){
         squid.xTentaclesPosition = squid.body.x - 60;
     }
+    else if(game.global.level == 3){
+        squid.xTentaclesPosition = squid.body.x - 20;
+    }
     else if(game.global.level == 2){
-        squid.xTentaclesPosition = squid.body.x - 30;
+        squid.xTentaclesPosition = squid.body.x + 25;
     }
     else
-        squid.xTentaclesPosition = squid.body.x + 30;
+        squid.xTentaclesPosition = squid.body.x + 60;
 
     for (var i = game.global.level * 2 - 1; i>=0; i--){
 
@@ -76,15 +99,15 @@ function addTentacles(squid){
             squid.tentacles[i] = addTentacle( 
                 squid.xTentaclesPosition + (i*40), 
                 squid.body.y + 150, 
-                i * 10 );
+                i);
         else
             squid.tentacles[i] = addTentacle( 
                 squid.xTentaclesPosition + (i*40) + 60, 
                 squid.body.y + 150, 
-                i * 10 );
+                i);
 
         squid.tentaclesIsAttacking[i] = false;
-        squid.keys.splice(i*10, 1);
+        squid.keys.splice(i, 1);
     }
 }
 
@@ -97,7 +120,7 @@ function updateSquid(){
     }
 
     if (!winState && game.global.health > 0){
-        player.attack.attackHitEnemy(this);
+        player.attack.attackHitEnemy(this.beak);
 
         for (var i = 0; i < game.global.level * 2; i++){
             this.isAttacking(i);
@@ -215,20 +238,21 @@ function extendTentacle(id){
     var key = this.keys[id];
     this.keys.splice(id, 1);
 
-    var tentacle = this.tentacles[ Math.floor(key/10) ];
-    if(tentacle != null){
+    var number = key % (game.global.level * 2);
+    var tentacle = this.tentacles[ number ];
+    if(this.tentacles[number] != null){
         tentacle.addSegment(key);
     }
     else{
-        if(  Math.floor(key/10) < game.global.level ){
-            this.tentacles[ Math.floor(key/10) ] = addTentacle( 
-                this.xTentaclesPosition + (Math.floor(key/10)*40), 
+        if(  number < game.global.level ){
+            this.tentacles[ number ] = addTentacle( 
+                this.xTentaclesPosition + (number * 40), 
                 this.body.y + 150, 
                 key);
         }
         else
-            this.tentacles[ Math.floor(key/10) ] = addTentacle( 
-                this.xTentaclesPosition + (Math.floor(key/10)*40) + 60, 
+            this.tentacles[ number ] = addTentacle( 
+                this.xTentaclesPosition + (number * 40) + 60, 
                 this.body.y + 150, 
                 key);
 
@@ -236,15 +260,15 @@ function extendTentacle(id){
 
 
 
-    tentacle = this.tentacles[ Math.floor(key/10) ]
-    if( Math.floor(key/10) < game.global.level )
+    tentacle = this.tentacles[ number ]
+    if( number < game.global.level )
         tentacle.setInitTarget(
-            this.xTentaclesPosition + (Math.floor(key/10)*40), 
+            this.xTentaclesPosition + (number * 40), 
             this.body.y + 150,
             -10);
     else
         tentacle.setInitTarget(
-            this.xTentaclesPosition + (Math.floor(key/10)*40) + 60, 
+            this.xTentaclesPosition + (number * 40) + 60, 
             this.body.y + 150,
             10);
 
@@ -279,6 +303,8 @@ function squidTakeDagame(damage){
     if (this.health <= 0){
         gui.upScore(200);
 
+        squid.beak.destroy();
+
         this.healthBar.visible = false;
 
         var explosion = explosions.getFirstExists(false);
@@ -289,8 +315,13 @@ function squidTakeDagame(damage){
         explosion.reset(this.body.x + 100, this.body.y + 40);
         explosion.play('kaboom', 30, false, true);
 
+        this.animations.play('die');
+
         this.hit_sound.play();
         player.setWinState();
+
+        if(segment)
+            segment.destroy();
     }
 }
 
