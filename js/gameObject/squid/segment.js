@@ -1,7 +1,10 @@
 
 function addSegment(){
 	var segment;
-    segment = game.add.sprite(squid.body.x + 600, squid.body.y + 50, "segment");
+    segment = game.add.sprite(squid.body.x + 600, squid.body.y + 50, "food");
+    segment.animations.add('go', [0, 1, 2], 8, true);
+    segment.play('go');
+
     game.physics.enable(segment, Phaser.Physics.ARCADE);
     segment.body.velocity.x = -100;
 

@@ -114,7 +114,7 @@ function hitPlayer(segment){
 }
 
 function playerTakeDamage(damage){
-	game.global.health -= damage;
+//	game.global.health -= damage;
 	this.checkHealth();
 	this.playerDies();
 }
@@ -282,4 +282,5 @@ function activateVelocity(){
 function setWinState(){
 	winState = true;
 	timeOfWinState = game.time.now;
+	this.body.velocity.setTo(0, 0);
 }

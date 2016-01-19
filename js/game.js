@@ -2,7 +2,7 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
 
 game.global = {
-	level : 1,
+	level : 5,
 	is_playing : false,
 	lives : 3,
 	health : 100

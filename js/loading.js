@@ -12,11 +12,8 @@ loading = {
             { font: "28pt ferney", fill: '#fff', stroke: '#000000', strokeThickness: 3 });
     },this);
 
-    game.load.image('arrow', 'assets/pics/bullets/arrow.png');
-    game.load.image('arrowItem', 'assets/pics/items/arrowItem.png');
     game.load.spritesheet('bombArrow', 'assets/pics/bullets/bombArrow.png', 13, 32);
-    game.load.image('fastArrow', 'assets/pics/bullets/fastArrow.png');
-    game.load.image('enemyBullet', 'assets/pics/bullets/spiderBullet.png');
+    game.load.image('enemyBullet', 'assets/pics/bullets/bossBullet.png');
 
     game.load.image('torpedo', 'assets/pics/items/bombArrowItem.png');
     game.load.image('velocity', 'assets/pics/items/speedItem.png');
@@ -27,6 +24,7 @@ loading = {
     game.load.spritesheet('boss', 'assets/pics/enemys/boss.png', 256, 204);
     game.load.spritesheet('beak', 'assets/pics/enemys/beak.png', 48, 48);
     game.load.spritesheet('segment', 'assets/pics/enemys/segment.png', 31, 40);
+    game.load.spritesheet('food', 'assets/pics/enemys/food.png', 69, 49);
     game.load.image('enemyBar', 'assets/pics/enemys/enemyBar.png');
 
     game.load.image('ink', 'assets/pics/ink.png');
@@ -46,11 +44,11 @@ loading = {
     game.load.image('pause', 'assets/pics/images/pause.png');
     game.load.image('win', 'assets/pics/images/win.png');
 
-    game.load.image(        'sky',        'assets/pics/videos/sky.png');
-    game.load.spritesheet(  'link',       'assets/pics/videos/link.png', 148, 150);
-    game.load.spritesheet(  'linkfail',   'assets/pics/videos/linkfail.png', 145, 175);
-    game.load.image(        'cloud',      'assets/pics/videos/cloud.png');
-    game.load.image(        'dialog',     'assets/pics/videos/dialog.png');
+    game.load.image('sky', 'assets/pics/videos/introvideo.png');
+    game.load.spritesheet('link', 'assets/pics/videos/link.png', 148, 150);
+    game.load.spritesheet('linkfail', 'assets/pics/videos/linkfail.png', 145, 175);
+    game.load.image('cloud', 'assets/pics/videos/cloud.png');
+    game.load.image('dialog', 'assets/pics/videos/dialog.png');
 
 
 /**************************************

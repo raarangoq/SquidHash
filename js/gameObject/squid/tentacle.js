@@ -1,7 +1,7 @@
 
-function addTentacle(x, y, id){
+function addTentacle(x, id){
 	var tentacle;
-    tentacle = game.add.sprite(x, y, "segment");
+    tentacle = game.add.sprite(x, 150, "segment");
     game.physics.enable(tentacle, Phaser.Physics.ARCADE);
     tentacle.body.immovable = true;
 
@@ -16,7 +16,7 @@ function addTentacle(x, y, id){
     
     tentacle.id = id;
     tentacle.xTarget = x;
-    tentacle.yTarget = y;
+    tentacle.yTarget = 150;
 
     tentacle.health = 10;
 
@@ -44,6 +44,7 @@ function updateTentacle(hitTorpedo){
 
 	if(!hitTorpedo)
 		hitTorpedo = false;
+
 
 	if( game.physics.arcade.distanceToXY(this, this.xTarget, this.yTarget) < 30 ){ 
         this.body.velocity.setTo(0,0);
@@ -134,16 +135,21 @@ function setFrameSegment(){
 }
 
 function addTentacleSegment(id){
+	if(this.nextSegment){
+		this.nextSegment.addSegment(id);
+		return;
+	}
+
 	var number = id % (game.global.level * 2);
 	var x = squid.xTentaclesPosition + (number * 40);
 	if(number >= game.global.level)
 		x += 60;
-	var segment = addTentacle( x, squid.body.y + 150, id);
-	this.previousSegment = segment;
-	segment.nextSegment = this;
-	squid.tentacles[number] = segment;
+	var segment = addTentacle( x, id);
 
-	this.previousSegment.setFrameSegment();
+	this.nextSegment = segment;
+	segment.previousSegment = this;
+
+	this.nextSegment.setFrameSegment();
 	this.setFrameSegment();
 
 }

@@ -24,7 +24,10 @@ var torpedo = null;
 var pauseImage;
 var winImage;
 var loseImage;
+
 var endImage;
+var endText;
+
 var background;
 
 var inkImage;
@@ -76,13 +79,14 @@ levels = {
     winImage.visible = false;
     loseImage = game.add.sprite(0, 0, 'lose');
     loseImage.visible = false;
-    endImage = game.add.sprite(0, 0, 'end');
+    endImage = game.add.sprite(0, 0, 'sky');
     endImage.visible = false;
+    
 
     gui = new GUI();
 
 //text = game.add.text(20, 540, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
-//texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
+texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
 //textb = game.add.text(20, 200, 'Cargando...', { fontSize: '16px', fill: '#ffffff'});
 
 
@@ -96,7 +100,8 @@ levels = {
     explosions.forEach(this.setupExplosion, this);
 
 
-    items = addItem(400, 200, "torpedo");
+//    items = addItem(400, 200, "torpedo");
+  
     timeSpam = game.time.now;
     segment = null;
 
@@ -110,6 +115,14 @@ levels = {
         link.animations.add('fly', [0, 1, 2, 3, 4, 5, 6, 7, 8], 10, true);
         link.visible = false;
         scream_sound = game.add.audio('scream');
+
+        
+
+        endText = game.add.text(300, 200, '', 
+            { font: "26pt ferney", fill: '#fff', stroke:  '#000000', strokeThickness: 6,
+            wordWrap: true, wordWrapWidth: 400, align: "center"});
+        endText.anchor.set(0.5);
+
     }
 
       
@@ -226,6 +239,7 @@ levels = {
             }
             else if(game.time.now - timeOfWinState < 5000){
                 if(!winAnimationPointA){
+                    squid.play('die');
                     game.physics.arcade.moveToXY(player, 800, 300, 200);
                     player.playAnimations("right");
                     player.body.collideWorldBounds = false;
@@ -233,27 +247,25 @@ levels = {
                 }
             }
             else{
-                if (game.global.level != 5)
-                    winImage.visible = true;
-                else
-                    endImage.visible = true;
+                winImage.visible = true;
             }
         }
         else{
 //            sound_backgroud.stop();
 
             var local_time = game.time.now - timeOfWinState;
-            if( local_time < 1800){//wait
+            if( local_time < 2800){//wait
             }
-            else if (local_time < 2000){
+            else if (local_time < 4000){
                 if(!playedA){
-                    this.addExplosion(squid.body.x + 50, squid.body.y);
-                    this.addExplosion(squid.body.x + 50, squid.body.y + 100);
+                    squid.play('die');
+                //    this.addExplosion(squid.body.x + 50, squid.body.y);
+                //    this.addExplosion(squid.body.x + 50, squid.body.y + 100);
                     playedA = true;
                     boom_sound.play();
                 }
             }
-            else if (local_time < 2200){
+            else if (local_time < 4200){
                 if(!playedB){
                     this.addExplosion(squid.body.x + 50, squid.body.y + 200);
                     this.addExplosion(squid.body.x + 50, squid.body.y + 300);
@@ -261,7 +273,7 @@ levels = {
                     boom_sound.play();
                 }
             }
-            else if (local_time < 2400){
+            else if (local_time < 4400){
                 if(!playedC){
                     this.addExplosion(squid.body.x + 50, squid.body.y + 400);
                     this.addExplosion(squid.body.x + 50, squid.body.y + 450);
@@ -269,7 +281,7 @@ levels = {
                     boom_sound.play();
                 }
             }
-            else if (local_time < 2600){
+            else if (local_time < 4600){
                 if(!playedD){
                     playedD = true;
 
@@ -302,6 +314,7 @@ levels = {
             }
             else{
                 endImage.visible = true;
+                endText.text = 'Bien hecho, has logrado acabar con esos enormes calamares, ahora el pueblo está a salvo.';
                 link.visible = false;
             }
         }
@@ -335,20 +348,8 @@ levels = {
 
 //textb.text = game.time.fps;
 //if (squid.retractingTentacle[0] != null)
-//texta.text = player.speed;
-/*var segment = squid.tentacles[0]
-    .nextSegment
-    .nextSegment
-    .nextSegment
-    .nextSegment;
+texta.text = squid.tentacles[0].yTarget;
 
-
-if (segment && segment.body){
-texta.text = segment.xTarget + '\n' +
-    segment.yTarget + '\n' +
-    game.physics.arcade.distanceToXY(segment, segment.xTarget, segment.yTarget) ;  
-}
-*/
     },
 
     resetBullet: function(bullet) {
