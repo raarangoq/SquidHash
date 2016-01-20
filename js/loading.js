@@ -7,11 +7,6 @@ var text;
 loading = {
 	preload: function(){
 
-    game.time.events.add(2000, function () {       
-        text = game.add.text(20, 540, "Cargando..", 
-            { font: "28pt ferney", fill: '#fff', stroke: '#000000', strokeThickness: 3 });
-    },this);
-
     game.load.spritesheet('bombArrow', 'assets/pics/bullets/bombArrow.png', 13, 32);
     game.load.image('enemyBullet', 'assets/pics/bullets/bossBullet.png');
 
@@ -72,10 +67,14 @@ loading = {
 
 	},
 
-	
 	create: function(){
-		addKeyboard();
+        addKeyboard();
+    },
 
-		game.state.start('initMenu');	
-    }
+    update: function(){
+        if(game.load.onLoadComplete){
+            loadingImage.destroy();
+            game.state.start('initMenu');
+        }
+    },
 }

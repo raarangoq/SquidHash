@@ -8,7 +8,8 @@ game.global = {
 	health : 100
 }
 
-game.state.add('loading', loading, true);
+game.state.add('boot', boot, true);
+game.state.add('loading', loading);
 
 //game.state.add('lose', lose);
 //game.state.add('win', win);
