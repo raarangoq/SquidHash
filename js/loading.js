@@ -37,6 +37,8 @@ loading = {
     game.load.image('initmenu', 'assets/pics/images/initmenu.png');
     game.load.image('lose', 'assets/pics/images/lose.png');
     game.load.image('pause', 'assets/pics/images/pause.png');
+    game.load.image('blankpause', 'assets/pics/images/blankpause.png');
+    game.load.image('input', 'assets/pics/images/input.png');
     game.load.image('win', 'assets/pics/images/win.png');
 
     game.load.image('sky', 'assets/pics/videos/introvideo.png');

@@ -12,7 +12,11 @@ boot = {
 		game.physics.enable(loadingImage, Phaser.Physics.ARCADE);
 		loadingImage.body.angularVelocity = 180;
 
-		game.state.start('loading', false);
+		game.time.events.add(2000, function () {  
+			game.state.start('loading', false);
+     	},this);
+
+		
 	},
 
 }
