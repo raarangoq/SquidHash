@@ -34,7 +34,7 @@ function addTorpedo(){
 
 
 
-    torpedo.damage = 50;
+    torpedo.damage = 150;
 
     torpedo.sound = game.add.audio("torpedo", 0.5);
     torpedo.sound.play();

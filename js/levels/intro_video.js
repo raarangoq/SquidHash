@@ -2,7 +2,6 @@
 var sky;
 var dialog;
 var link;
-var cloud;
 var music;
 
 var time;
@@ -12,21 +11,6 @@ var text;
 intro_video = {
 	create: function(){
 		sky = game.add.sprite(0, 0, 'sky');
-
-		cloud = game.add.sprite(300, 100, 'cloud');
-		cloud.scale.setTo(0.3, 0.5);
-		game.physics.enable(cloud, Phaser.Physics.ARCADE);
-		cloud.body.velocity.x= 2;
-		cloud = game.add.sprite(-30, 130, 'cloud');
-		cloud.scale.setTo(0.7, 0.3);
-		game.physics.enable(cloud, Phaser.Physics.ARCADE);
-		cloud.body.velocity.x= 3;
-		cloud = game.add.sprite(400, 50, 'cloud');
-		cloud.scale.setTo(0.1, 0.1);
-		game.physics.enable(cloud, Phaser.Physics.ARCADE);
-		cloud.body.velocity.x= 3;
-
-
 
 		dialog = game.add.sprite(230, 300, 'dialog');
 		dialog.visible = false;

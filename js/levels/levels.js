@@ -118,10 +118,11 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
 
         
 
-        endText = game.add.text(300, 200, '', 
+        endText = game.add.text(400, 300, '', 
             { font: "26pt ferney", fill: '#fff', stroke:  '#000000', strokeThickness: 6,
-            wordWrap: true, wordWrapWidth: 400, align: "center"});
+            wordWrap: true, wordWrapWidth: 600, align: "center"});
         endText.anchor.set(0.5);
+        endImage.addChild(endText);
 
     }
 

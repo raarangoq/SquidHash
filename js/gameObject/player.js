@@ -114,7 +114,7 @@ function hitPlayer(segment){
 }
 
 function playerTakeDamage(damage){
-//	game.global.health -= damage;
+	game.global.health -= damage;
 	this.checkHealth();
 	this.playerDies();
 }

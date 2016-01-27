@@ -44,7 +44,6 @@ loading = {
     game.load.image('sky', 'assets/pics/videos/introvideo.png');
     game.load.spritesheet('link', 'assets/pics/videos/link.png', 148, 150);
     game.load.spritesheet('linkfail', 'assets/pics/videos/linkfail.png', 145, 175);
-    game.load.image('cloud', 'assets/pics/videos/cloud.png');
     game.load.image('dialog', 'assets/pics/videos/dialog.png');
 
 

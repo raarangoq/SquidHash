@@ -11,12 +11,6 @@ function addPausePage0(){
 	text.anchor.setTo(0.5, 0.5);
 	page.addChild(text);
 
-	text = game.add.text (-0, 250, 
-		'bnaskf naslfadsl',
-		{ font: "16pt ferney", fill: '#fff', stroke: '#000000', strokeThickness: 3,
-		wordWrap: true, wordWrapWidth: 600, align: 'center'});
-	text.anchor.setTo(0.5, 0.5);
-	page.addChild(text);
 
 	page.setAlive = setPageAlive;
 	return page;
