@@ -250,8 +250,8 @@ function updatePlayer(){
 			this.toAttack();
 	}
 
-	// cuando el jugador cae al agua sufre daño y vuelve a una posición por defecto
-	if(!winState && this.body.y < 150){
+	// cuando el jugador sale del muelle, sufre daño y vuelve a una posición por defecto
+	if(!winState && (this.body.y < 150 || this.y > 660 || this.x < -60 || this.x > 860)){
 		this.takeDamage(20);
 			var explosion = explosions.getFirstExists(false);
 	        explosion.reset(this.body.x, this.body.y);
