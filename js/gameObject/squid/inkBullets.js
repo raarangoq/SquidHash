@@ -13,7 +13,7 @@ function addInkBullets(){
     enemyBullets.setAll('outOfBoundsKill', true);
     enemyBullets.setAll('checkWorldBounds', true);
 
-    enemyBullets.damage = 10;
+    enemyBullets.damage = 30;
 
     enemyBullets.fireInkBullet = fireInkBullet;
 

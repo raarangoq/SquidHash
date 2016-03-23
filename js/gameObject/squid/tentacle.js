@@ -12,7 +12,7 @@ function addTentacle(x, id){
     var child = tentacle.addChild(textId);
     game.physics.enable(child, Phaser.Physics.ARCADE);
 
-    tentacle.damage = 20 + (game.global.level * 5);
+    tentacle.damage = 20 + (game.global.level * 8);
     
     tentacle.id = id;
     tentacle.xTarget = x;
