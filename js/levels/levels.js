@@ -81,7 +81,7 @@ levels = {
     loseImage.visible = false;
     endImage = game.add.sprite(0, 0, 'sky');
     endImage.visible = false;
-    
+
 
     gui = new GUI();
 
@@ -93,7 +93,7 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
 //game.global.level = 7;
 
     this.addAliens();
-    
+
     //  An explosion pool
     explosions = game.add.group();
     explosions.createMultiple(15, 'kaboom');
@@ -101,7 +101,7 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
 
 
 //    items = addItem(400, 200, "torpedo");
-  
+
     timeSpam = game.time.now;
     segment = null;
 
@@ -116,9 +116,9 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
         link.visible = false;
         scream_sound = game.add.audio('scream');
 
-        
 
-        endText = game.add.text(400, 300, '', 
+
+        endText = game.add.text(400, 300, '',
             { font: "26pt ferney", fill: '#fff', stroke:  '#000000', strokeThickness: 6,
             wordWrap: true, wordWrapWidth: 600, align: "center"});
         endText.anchor.set(0.5);
@@ -126,9 +126,9 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
 
     }
 
-      
 
-    
+
+
 
 //game.time.advancedTiming = true;
 
@@ -158,7 +158,7 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
                 if (segment != null)
                     segment.update();
 
-                if(squid.keys.length > 0 && 
+                if(squid.keys.length > 0 &&
                     game.time.now - timeSpam > (10000 / game.global.level) ){
                     if (segment == null){
                         segment = addSegment();
@@ -176,19 +176,19 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
             if(torpedo && torpedo.body){
                 if(torpedo.body.y < -30)
                     torpedo.destroy();
-                
+
                 if (game.physics.arcade.overlap(torpedo, squid.beak) ){
                     squid.takeDamage(torpedo.damage);
                     this.addExplosion(torpedo.body.x, torpedo.body.y);
                     torpedo.destroy();
                 }
-                
+
                 if (game.physics.arcade.overlap(torpedo, squid) ){
                     this.addExplosion(torpedo.body.x, torpedo.body.y);
                     torpedo.destroy();
                 }
 
-                
+
             }
 
             if (items){
@@ -306,7 +306,7 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
                     link.body.position.setTo(300, 200);
                     link.frame = 9;
                     scream_sound.stop();
-                    
+
                     if (!playedE){
                         player.sound_hit.play();
                         playedE = true;
@@ -333,17 +333,17 @@ texta = game.add.text(20, 400, 'Cargando...', { fontSize: '16px', fill: '#ffffff
     },
 
     enemyHitsPlayer: function(player, bullet) {
-        
+
         bullet.kill();
         player.takeDamage(enemyBullets.damage);
 
         timeOfInkColide = game.time.now;
         inkImage.alpha = 1;
         inkImage.visible = true;
-        
+
     },
 
-    
+
 
     render: function() {
 
@@ -368,6 +368,14 @@ texta.text = squid.tentacles[0].yTarget;
             if (game.global.level == 6){
                 game.global.level = 1;
                 game.global.lives = 3;
+
+                ScormProcessSetValue("cmi.core.score.min", 0.0000);
+                ScormProcessSetValue("cmi.core.score.max", 100.0000);
+                ScormProcessSetValue("cmi.core.score.raw", 100);
+                if( ScormProcessGetValue("cmi.comments") < gui.scoreText.score )
+                    ScormProcessSetValue("cmi.comments", gui.scoreText.score);
+
+
             }
         }
         else{

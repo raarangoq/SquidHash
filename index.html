@@ -1,13 +1,13 @@
-<!doctype html> 
-<html lang="en"> 
-<head> 
+<!doctype html>
+<html lang="en">
+<head>
 	<meta charset="UTF-8" />
 	<title>SquidHash</title>
 
 	<script type="text/javascript" src="js/phaser.min.js"></script>
 
 	<script type="text/javascript" src="js/input.js"></script>
-	
+
 	<script type="text/javascript" src="js/gameObject/playerBullets.js"></script>
 	<script type="text/javascript" src="js/gameObject/player.js"></script>
 	<script type="text/javascript" src="js/gameObject/attack.js"></script>
@@ -24,28 +24,44 @@
 	<script type="text/javascript" src="js/GUI/pause.js"></script>
 	<script type="text/javascript" src="js/GUI/pausepages.js"></script>
 	<script type="text/javascript" src="js/GUI/itemsBar.js"></script>
-	
+
 	<script type="text/javascript" src="js/levels/levels.js"></script>
 	<script type="text/javascript" src="js/levels/initMenu.js"></script>
 	<script type="text/javascript" src="js/levels/intro_video.js"></script>
 
 	<script type="text/javascript" src="js/loading.js"></script>
-	<script type="text/javascript" src="js/boot.js"></script>		
+	<script type="text/javascript" src="js/boot.js"></script>
 
 
-	<script type="text/javascript" src="js/game.js"></script>	
+	<script type="text/javascript" src="js/game.js"></script>
 
+	<script type="text/javascript">
+		function doStart(){
 
+		ScormProcessInitialize();
+		API = getAPI();
+
+		ScormProcessSetValue("cmi.core.score.raw", "0");
+		ScormProcessSetValue("cmi.core.score.min", "0");
+		ScormProcessSetValue("cmi.core.score.max", "100");
+
+		game.state.start('boot');
+	}
+
+	function doUnload(){
+		ScormProcessFinish();
+	}
+
+	</script>
 
 
     <style type="text/css">
         @font-face{
-        	font-family: 'ferney'; 
+        	font-family: 'ferney';
         	src: url('assets/fonts/04B_03__.TTF');
         	font-weight: normal;
         	font-style: normal;
         }
     </style>
 </head>
-<body>
-
+<body onload="doStart();" onunload="doUnload();">
